@@ -9,21 +9,50 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 public class SecurityConfig {
+
     @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    SecurityFilterChain securityFilterChain(
+        HttpSecurity http
+    ) throws Exception {
+
         http
-            .csrf(csrf -> csrf.disable())
-            .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers(
-                    "/auth/login",
-                    "/swagger-ui/**",
-                    "/swagger-ui.html",
-                    "/v3/api-docs/**",
-                    "/h2-console/**"
-                ).permitAll()
-                .anyRequest().denyAll()
+            .csrf(
+                csrf ->
+                    csrf.disable()
+            )
+            .headers(
+                headers ->
+                    headers.frameOptions(
+                        frame ->
+                            frame.sameOrigin()
+                    )
+            )
+            .authorizeHttpRequests(
+                auth ->
+                    auth
+                        .requestMatchers(
+                            "/auth/login",
+                            "/swagger-ui/**",
+                            "/swagger-ui.html",
+                            "/v3/api-docs/**",
+                            "/h2-console/**"
+                        )
+                        .permitAll()
+                        .requestMatchers(
+                            "/unidades-curriculares/**"
+                        )
+                        .authenticated()
+                        .anyRequest()
+                        .denyAll()
+            )
+            .oauth2ResourceServer(
+                oauth2 ->
+                    oauth2.jwt(
+                        jwt -> {
+                        }
+                    )
             );
+
         return http.build();
     }
 

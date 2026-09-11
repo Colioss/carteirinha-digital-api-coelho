@@ -14,32 +14,70 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
 @Component
-public class JwtTokenProvider implements TokenProviderPort {
+public class JwtTokenProvider
+    implements TokenProviderPort {
+
     private final JwtEncoder jwtEncoder;
     private final String issuer;
     private final long expirationMinutes;
 
-    public JwtTokenProvider(JwtEncoder jwtEncoder,
-                            @Value("${app.jwt.issuer}") String issuer,
-                            @Value("${app.jwt.expiration-minutes}") long expirationMinutes) {
+    public JwtTokenProvider(
+        JwtEncoder jwtEncoder,
+        @Value("${app.jwt.issuer}")
+        String issuer,
+        @Value("${app.jwt.expiration-minutes}")
+        long expirationMinutes
+    ) {
         this.jwtEncoder = jwtEncoder;
         this.issuer = issuer;
         this.expirationMinutes = expirationMinutes;
     }
 
     @Override
-    public String gerarPara(Usuario usuario) {
-        Instant agora = Instant.now();
-        JwtClaimsSet claims = JwtClaimsSet.builder()
-            .issuer(issuer)
-            .issuedAt(agora)
-            .expiresAt(agora.plus(expirationMinutes, ChronoUnit.MINUTES))
-            .subject(usuario.login())
-            .claim("usuarioId", usuario.id().toString())
-            .claim("nome", usuario.nome())
-            .build();
+    public String gerarPara(
+        Usuario usuario
+    ) {
 
-        JwsHeader header = JwsHeader.with(MacAlgorithm.HS256).build();
-        return jwtEncoder.encode(JwtEncoderParameters.from(header, claims)).getTokenValue();
+        Instant agora = Instant.now();
+
+        JwtClaimsSet claims =
+            JwtClaimsSet
+                .builder()
+                .issuer(issuer)
+                .issuedAt(agora)
+                .expiresAt(
+                    agora.plus(
+                        expirationMinutes,
+                        ChronoUnit.MINUTES
+                    )
+                )
+                .subject(usuario.login())
+                .claim(
+                    "usuarioId",
+                    usuario.id().toString()
+                )
+                .claim(
+                    "nome",
+                    usuario.nome()
+                )
+                .claim(
+                    "matricula",
+                    usuario.matricula()
+                )
+                .build();
+
+        JwsHeader header =
+            JwsHeader
+                .with(MacAlgorithm.HS256)
+                .build();
+
+        return jwtEncoder
+            .encode(
+                JwtEncoderParameters.from(
+                    header,
+                    claims
+                )
+            )
+            .getTokenValue();
     }
 }
