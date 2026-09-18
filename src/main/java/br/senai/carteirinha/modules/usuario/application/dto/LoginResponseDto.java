@@ -1,13 +1,14 @@
 package br.senai.carteirinha.modules.usuario.application.dto;
 
 /**
- * Dados devolvidos ao aplicativo depois da autenticação.
- * Não possui refresh token nesta etapa do curso.
+ * Dados devolvidos ao aplicativo após a autenticação.
  */
 public record LoginResponseDto(
     String id,
     String nome,
+    String matricula,
     String curso,
     String turma,
     String token
-) {}
+) {
+}

@@ -7,24 +7,35 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public class UsuarioPersistenceAdapter implements UsuarioRepository {
+public class UsuarioPersistenceAdapter
+    implements UsuarioRepository {
+
     private final SpringDataUsuarioRepository repository;
 
-    public UsuarioPersistenceAdapter(SpringDataUsuarioRepository repository) {
+    public UsuarioPersistenceAdapter(
+        SpringDataUsuarioRepository repository
+    ) {
         this.repository = repository;
     }
 
     @Override
-    public Optional<Usuario> buscarPorLogin(String login) {
-        return repository.findByLoginIgnoreCase(login).map(this::toDomain);
+    public Optional<Usuario> buscarPorLogin(
+        String login
+    ) {
+        return repository
+            .findByLoginIgnoreCase(login)
+            .map(this::toDomain);
     }
 
-    private Usuario toDomain(UsuarioJpaEntity entity) {
+    private Usuario toDomain(
+        UsuarioJpaEntity entity
+    ) {
         return new Usuario(
             entity.getId(),
             entity.getLogin(),
             entity.getSenhaHash(),
             entity.getNome(),
+            entity.getMatricula(),
             entity.getCurso(),
             entity.getTurma(),
             entity.isAtivo()
