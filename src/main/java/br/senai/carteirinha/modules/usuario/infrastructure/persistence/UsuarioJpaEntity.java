@@ -1,7 +1,10 @@
 package br.senai.carteirinha.modules.usuario.infrastructure.persistence;
 
+import br.senai.carteirinha.modules.usuario.domain.PerfilAcesso;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
@@ -51,6 +54,13 @@ public class UsuarioJpaEntity {
     )
     private String matricula;
 
+    @Enumerated(EnumType.STRING)
+    @Column(
+        name = "perfil",
+        length = 20
+    )
+    private PerfilAcesso perfil;
+
     @Column(
         nullable = false,
         length = 150
@@ -75,6 +85,7 @@ public class UsuarioJpaEntity {
         String senhaHash,
         String nome,
         String matricula,
+        PerfilAcesso perfil,
         String curso,
         String turma,
         boolean ativo
@@ -84,6 +95,7 @@ public class UsuarioJpaEntity {
         this.senhaHash = senhaHash;
         this.nome = nome;
         this.matricula = matricula;
+        this.perfil = perfil;
         this.curso = curso;
         this.turma = turma;
         this.ativo = ativo;
@@ -109,6 +121,10 @@ public class UsuarioJpaEntity {
         return matricula;
     }
 
+    public PerfilAcesso getPerfil() {
+        return perfil;
+    }
+
     public String getCurso() {
         return curso;
     }
@@ -119,5 +135,11 @@ public class UsuarioJpaEntity {
 
     public boolean isAtivo() {
         return ativo;
+    }
+
+    public void definirPerfil(
+        PerfilAcesso perfil
+    ) {
+        this.perfil = perfil;
     }
 }

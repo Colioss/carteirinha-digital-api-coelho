@@ -17,18 +17,46 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/auth")
 @Tag(name = "Autenticação")
 public class AuthController {
-    private final AutenticarUsuarioUseCase autenticarUsuario;
 
-    public AuthController(AutenticarUsuarioUseCase autenticarUsuario) {
-        this.autenticarUsuario = autenticarUsuario;
+    private final AutenticarUsuarioUseCase
+        autenticarUsuario;
+
+    public AuthController(
+        AutenticarUsuarioUseCase autenticarUsuario
+    ) {
+        this.autenticarUsuario =
+            autenticarUsuario;
     }
 
     @PostMapping("/login")
-    @Operation(summary = "Autentica o aluno e devolve seus dados e o token JWT")
-    @ApiResponse(responseCode = "200", description = "Login realizado")
-    @ApiResponse(responseCode = "400", description = "Login ou senha não preenchidos")
-    @ApiResponse(responseCode = "401", description = "Credenciais inválidas")
-    public ResponseEntity<LoginResponseDto> login(@Valid @RequestBody LoginRequestDto request) {
-        return ResponseEntity.ok(autenticarUsuario.autenticar(request));
+    @Operation(
+        summary =
+            "Autentica o usuário e devolve perfil, dados e token JWT"
+    )
+    @ApiResponse(
+        responseCode = "200",
+        description = "Login realizado"
+    )
+    @ApiResponse(
+        responseCode = "400",
+        description =
+            "Login ou senha não preenchidos"
+    )
+    @ApiResponse(
+        responseCode = "401",
+        description =
+            "Credenciais inválidas"
+    )
+    public ResponseEntity<LoginResponseDto> login(
+        @Valid
+        @RequestBody
+        LoginRequestDto request
+    ) {
+
+        return ResponseEntity.ok(
+            autenticarUsuario.autenticar(
+                request
+            )
+        );
     }
 }

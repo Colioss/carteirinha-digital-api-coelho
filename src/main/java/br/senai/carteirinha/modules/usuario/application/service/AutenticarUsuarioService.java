@@ -41,7 +41,10 @@ public final class AutenticarUsuarioService
                 ? ""
                 : credenciais.senha();
 
-        if (login.isBlank() || senha.isBlank()) {
+        if (
+            login.isBlank()
+                || senha.isBlank()
+        ) {
             throw new CredenciaisInvalidasException();
         }
 
@@ -58,7 +61,10 @@ public final class AutenticarUsuarioService
                 usuario.senhaHash()
             );
 
-        if (!usuario.estaAtivo() || !senhaCorreta) {
+        if (
+            !usuario.estaAtivo()
+                || !senhaCorreta
+        ) {
             throw new CredenciaisInvalidasException();
         }
 
@@ -66,9 +72,12 @@ public final class AutenticarUsuarioService
             usuario.id().toString(),
             usuario.nome(),
             usuario.matricula(),
+            usuario.perfil().name(),
             usuario.curso(),
             usuario.turma(),
-            tokenProvider.gerarPara(usuario)
+            tokenProvider.gerarPara(
+                usuario
+            )
         );
     }
 }

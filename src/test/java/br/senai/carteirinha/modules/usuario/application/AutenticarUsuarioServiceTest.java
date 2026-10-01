@@ -3,6 +3,7 @@ package br.senai.carteirinha.modules.usuario.application;
 import br.senai.carteirinha.modules.usuario.application.dto.LoginRequestDto;
 import br.senai.carteirinha.modules.usuario.application.service.AutenticarUsuarioService;
 import br.senai.carteirinha.modules.usuario.domain.CredenciaisInvalidasException;
+import br.senai.carteirinha.modules.usuario.domain.PerfilAcesso;
 import br.senai.carteirinha.modules.usuario.domain.Usuario;
 import org.junit.jupiter.api.Test;
 
@@ -20,7 +21,7 @@ class AutenticarUsuarioServiceTest {
         );
 
     @Test
-    void deveAutenticarSemPrecisarDeSpringJpaOuJwtReal() {
+    void deveAutenticarAlunoEDevolverPerfil() {
 
         Usuario usuario =
             usuarioAtivo();
@@ -28,7 +29,9 @@ class AutenticarUsuarioServiceTest {
         var service =
             new AutenticarUsuarioService(
                 login ->
-                    Optional.of(usuario),
+                    Optional.of(
+                        usuario
+                    ),
                 (senhaPura, hash) ->
                     senhaPura.equals("123")
                         && hash.equals(
@@ -62,6 +65,11 @@ class AutenticarUsuarioServiceTest {
         );
 
         assertEquals(
+            "ALUNO",
+            resultado.perfil()
+        );
+
+        assertEquals(
             "Desenvolvimento de Sistemas",
             resultado.curso()
         );
@@ -74,6 +82,60 @@ class AutenticarUsuarioServiceTest {
         assertEquals(
             "token-gerado-pelo-adaptador",
             resultado.token()
+        );
+    }
+
+    @Test
+    void deveAutenticarProfessorSemCursoOuTurma() {
+
+        Usuario professor =
+            new Usuario(
+                UUID.fromString(
+                    "00000000-0000-0000-0000-000000000003"
+                ),
+                "professor",
+                "hash-da-senha",
+                "Professor Modelo",
+                "PROF20260001",
+                PerfilAcesso.PROFESSOR,
+                "",
+                "",
+                true
+            );
+
+        var service =
+            new AutenticarUsuarioService(
+                login ->
+                    Optional.of(
+                        professor
+                    ),
+                (senha, hash) ->
+                    true,
+                usuario ->
+                    "token-professor"
+            );
+
+        var resultado =
+            service.autenticar(
+                new LoginRequestDto(
+                    "professor",
+                    "123"
+                )
+            );
+
+        assertEquals(
+            "PROFESSOR",
+            resultado.perfil()
+        );
+
+        assertEquals(
+            "",
+            resultado.curso()
+        );
+
+        assertEquals(
+            "",
+            resultado.turma()
         );
     }
 
@@ -139,6 +201,7 @@ class AutenticarUsuarioServiceTest {
                 "hash-da-senha",
                 "Rafael Costa",
                 "2026000001",
+                PerfilAcesso.ALUNO,
                 "Desenvolvimento de Sistemas",
                 "2DEVEST-A",
                 false
@@ -147,7 +210,9 @@ class AutenticarUsuarioServiceTest {
         var service =
             new AutenticarUsuarioService(
                 login ->
-                    Optional.of(inativo),
+                    Optional.of(
+                        inativo
+                    ),
                 (senha, hash) ->
                     true,
                 usuario ->
@@ -174,6 +239,7 @@ class AutenticarUsuarioServiceTest {
             "hash-da-senha",
             "Rafael Costa",
             "2026000001",
+            PerfilAcesso.ALUNO,
             "Desenvolvimento de Sistemas",
             "2DEVEST-A",
             true

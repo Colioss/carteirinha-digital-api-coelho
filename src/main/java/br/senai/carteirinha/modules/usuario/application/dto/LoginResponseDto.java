@@ -7,6 +7,7 @@ public record LoginResponseDto(
     String id,
     String nome,
     String matricula,
+    String perfil,
     String curso,
     String turma,
     String token

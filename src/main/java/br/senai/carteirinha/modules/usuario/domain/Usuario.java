@@ -15,6 +15,7 @@ public final class Usuario {
     private final String senhaHash;
     private final String nome;
     private final String matricula;
+    private final PerfilAcesso perfil;
     private final String curso;
     private final String turma;
     private final boolean ativo;
@@ -25,17 +26,74 @@ public final class Usuario {
         String senhaHash,
         String nome,
         String matricula,
+        PerfilAcesso perfil,
         String curso,
         String turma,
         boolean ativo
     ) {
-        this.id = Objects.requireNonNull(id);
-        this.login = exigirTexto(login, "login");
-        this.senhaHash = exigirTexto(senhaHash, "senhaHash");
-        this.nome = exigirTexto(nome, "nome");
-        this.matricula = exigirTexto(matricula, "matricula");
-        this.curso = exigirTexto(curso, "curso");
-        this.turma = exigirTexto(turma, "turma");
+        this.id =
+            Objects.requireNonNull(
+                id,
+                "id não pode ser nulo"
+            );
+
+        this.login =
+            exigirTexto(
+                login,
+                "login"
+            );
+
+        this.senhaHash =
+            exigirTexto(
+                senhaHash,
+                "senhaHash"
+            );
+
+        this.nome =
+            exigirTexto(
+                nome,
+                "nome"
+            );
+
+        this.matricula =
+            exigirTexto(
+                matricula,
+                "matricula"
+            );
+
+        this.perfil =
+            Objects.requireNonNull(
+                perfil,
+                "perfil não pode ser nulo"
+            );
+
+        if (perfil == PerfilAcesso.ALUNO) {
+
+            this.curso =
+                exigirTexto(
+                    curso,
+                    "curso"
+                );
+
+            this.turma =
+                exigirTexto(
+                    turma,
+                    "turma"
+                );
+
+        } else {
+
+            this.curso =
+                textoOpcional(
+                    curso
+                );
+
+            this.turma =
+                textoOpcional(
+                    turma
+                );
+        }
+
         this.ativo = ativo;
     }
 
@@ -59,6 +117,10 @@ public final class Usuario {
         return matricula;
     }
 
+    public PerfilAcesso perfil() {
+        return perfil;
+    }
+
     public String curso() {
         return curso;
     }
@@ -75,12 +137,27 @@ public final class Usuario {
         String valor,
         String campo
     ) {
-        if (valor == null || valor.isBlank()) {
+
+        if (
+            valor == null
+                || valor.isBlank()
+        ) {
             throw new IllegalArgumentException(
                 campo + " não pode estar vazio"
             );
         }
 
-        return valor;
+        return valor.trim();
+    }
+
+    private static String textoOpcional(
+        String valor
+    ) {
+
+        if (valor == null) {
+            return "";
+        }
+
+        return valor.trim();
     }
 }

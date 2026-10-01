@@ -1,6 +1,7 @@
 package br.senai.carteirinha.modules.usuario.infrastructure.persistence;
 
 import br.senai.carteirinha.modules.usuario.application.port.out.UsuarioRepository;
+import br.senai.carteirinha.modules.usuario.domain.PerfilAcesso;
 import br.senai.carteirinha.modules.usuario.domain.Usuario;
 import org.springframework.stereotype.Repository;
 
@@ -22,6 +23,7 @@ public class UsuarioPersistenceAdapter
     public Optional<Usuario> buscarPorLogin(
         String login
     ) {
+
         return repository
             .findByLoginIgnoreCase(login)
             .map(this::toDomain);
@@ -30,12 +32,19 @@ public class UsuarioPersistenceAdapter
     private Usuario toDomain(
         UsuarioJpaEntity entity
     ) {
+
+        PerfilAcesso perfil =
+            entity.getPerfil() == null
+                ? PerfilAcesso.ALUNO
+                : entity.getPerfil();
+
         return new Usuario(
             entity.getId(),
             entity.getLogin(),
             entity.getSenhaHash(),
             entity.getNome(),
             entity.getMatricula(),
+            perfil,
             entity.getCurso(),
             entity.getTurma(),
             entity.isAtivo()

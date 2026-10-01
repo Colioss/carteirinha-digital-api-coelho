@@ -38,20 +38,27 @@ public class JwtTokenProvider
         Usuario usuario
     ) {
 
-        Instant agora = Instant.now();
+        Instant agora =
+            Instant.now();
 
         JwtClaimsSet claims =
             JwtClaimsSet
                 .builder()
-                .issuer(issuer)
-                .issuedAt(agora)
+                .issuer(
+                    issuer
+                )
+                .issuedAt(
+                    agora
+                )
                 .expiresAt(
                     agora.plus(
                         expirationMinutes,
                         ChronoUnit.MINUTES
                     )
                 )
-                .subject(usuario.login())
+                .subject(
+                    usuario.login()
+                )
                 .claim(
                     "usuarioId",
                     usuario.id().toString()
@@ -64,11 +71,17 @@ public class JwtTokenProvider
                     "matricula",
                     usuario.matricula()
                 )
+                .claim(
+                    "perfil",
+                    usuario.perfil().name()
+                )
                 .build();
 
         JwsHeader header =
             JwsHeader
-                .with(MacAlgorithm.HS256)
+                .with(
+                    MacAlgorithm.HS256
+                )
                 .build();
 
         return jwtEncoder
