@@ -42,11 +42,14 @@ class UnidadeCurricularControllerIntegrationTest {
     }
 
     @Test
-    void deveListarSomenteAsUcsDoUsuarioAutenticado()
+    void alunoDeveListarSomenteSuasUcs()
         throws Exception {
 
         String token =
-            loginAluno();
+            login(
+                "aluno",
+                "123"
+            );
 
         mockMvc
             .perform(
@@ -97,8 +100,35 @@ class UnidadeCurricularControllerIntegrationTest {
             );
     }
 
-    private String loginAluno()
+    @Test
+    void professorNaoDeveAcessarEndpointDeUcsDoAluno()
         throws Exception {
+
+        String token =
+            login(
+                "professor",
+                "123"
+            );
+
+        mockMvc
+            .perform(
+                get(
+                    "/unidades-curriculares"
+                )
+                    .header(
+                        "Authorization",
+                        "Bearer " + token
+                    )
+            )
+            .andExpect(
+                status().isForbidden()
+            );
+    }
+
+    private String login(
+        String login,
+        String senha
+    ) throws Exception {
 
         String response =
             mockMvc
@@ -110,10 +140,13 @@ class UnidadeCurricularControllerIntegrationTest {
                         .content(
                             """
                             {
-                              "login": "aluno",
-                              "senha": "123"
+                              "login": "%s",
+                              "senha": "%s"
                             }
-                            """
+                            """.formatted(
+                                login,
+                                senha
+                            )
                         )
                 )
                 .andExpect(
@@ -126,8 +159,12 @@ class UnidadeCurricularControllerIntegrationTest {
                 );
 
         return objectMapper
-            .readTree(response)
-            .get("token")
+            .readTree(
+                response
+            )
+            .get(
+                "token"
+            )
             .asText();
     }
 }
